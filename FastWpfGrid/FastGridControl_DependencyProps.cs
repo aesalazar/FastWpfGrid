@@ -81,5 +81,25 @@ namespace FastWpfGrid
 
         #endregion
 
+        #region property IsVerticalScrollDisabled
+
+        public bool IsVerticalScrollDisabled
+        {
+            get { return (bool)GetValue(IsVerticalScrollDisabledProperty); }
+            set { SetValue(IsVerticalScrollDisabledProperty, value); }
+        }
+        public static readonly DependencyProperty IsVerticalScrollDisabledProperty = DependencyProperty.Register(
+            "IsVerticalScrollDisabled"
+            , typeof (bool)
+            , typeof (FastGridControl)
+            , new PropertyMetadata(default(bool), OnIsVerticalScrollDisabledPropertyChanged));
+
+        private static void OnIsVerticalScrollDisabledPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        {
+            ((FastGridControl)dependencyObject).OnIsVerticalScrollDisabledPropertyChanged((bool)e.NewValue);
+        }
+
+        #endregion
+
     }
 }

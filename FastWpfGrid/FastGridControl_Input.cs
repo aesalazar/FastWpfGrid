@@ -471,7 +471,7 @@ namespace FastWpfGrid
                 FixScrollPosition();
                 InvalidateAll();
             }
-            else
+            else if (vscroll.IsEnabled)
             {
                 if (e.Delta < 0) vscroll.Value = vscroll.Value + vscroll.LargeChange / 2;
                 if (e.Delta > 0) vscroll.Value = vscroll.Value - vscroll.LargeChange / 2;

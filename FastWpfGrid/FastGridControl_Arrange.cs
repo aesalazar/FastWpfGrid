@@ -399,6 +399,11 @@ namespace FastWpfGrid
             InvalidateAll();
         }
 
+        private void OnIsVerticalScrollDisabledPropertyChanged(bool isDisabled)
+        {
+            vscroll.IsEnabled = !isDisabled;
+        }
+
         private ActiveSeries GetActiveRealRows()
         {
             var res = new ActiveSeries();
