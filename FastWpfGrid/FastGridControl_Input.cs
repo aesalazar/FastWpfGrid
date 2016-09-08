@@ -27,6 +27,7 @@ namespace FastWpfGrid
 
         public event Action<object, ColumnClickEventArgs> ColumnHeaderClick;
         public event Action<object, RowClickEventArgs> RowHeaderClick;
+        public event EventHandler<ColumnFilterChangedEventArgs> ColumnFilterChanged;
         public List<ActiveRegion> CurrentCellActiveRegions = new List<ActiveRegion>();
         public ActiveRegion CurrentHoverRegion;
         private Point? _mouseCursorPoint;
@@ -449,6 +450,22 @@ namespace FastWpfGrid
                 //}
             }
             return false;
+        }
+
+        private void OnColumnFilterChanged(int column, string oldValue, string newValue)
+        {
+            if (ColumnFilterChanged == null)
+                return;
+
+            var args = new ColumnFilterChangedEventArgs
+            {
+                Column = column,
+                OldValue = oldValue,
+                NewValue = newValue,
+                Grid = this
+            };
+
+            ColumnFilterChanged(this, args);
         }
 
         private void edTextKeyDown(object sender, KeyEventArgs e)

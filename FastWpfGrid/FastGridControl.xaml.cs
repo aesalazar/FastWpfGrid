@@ -394,8 +394,16 @@ namespace FastWpfGrid
                     var cell = _inplaceEditorCell.IsColumnFilter 
                         ? GetColumnFilter(_inplaceEditorCell.Column.Value) 
                         : GetCell(_inplaceEditorCell.Row.Value, _inplaceEditorCell.Column.Value);
-                    cell.SetEditText(edText.Text);
+
+                    var oldvalue = cell.GetEditText();
+                    var newvalue = edText.Text;
+
+                    cell.SetEditText(newvalue);
                     InvalidateCell(_inplaceEditorCell);
+
+                    //If this is a column filter call the event
+                    if (_inplaceEditorCell.IsColumnFilter)
+                        OnColumnFilterChanged(_inplaceEditorCell.Column.Value, oldvalue, newvalue);
                 }
                 _inplaceEditorCell = new FastGridCellAddress();
                 edText.Text = "";

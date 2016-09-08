@@ -20,4 +20,12 @@ namespace FastWpfGrid
         public FastGridControl Grid;
         public bool Handled;
     }
+
+    public class ColumnFilterChangedEventArgs : EventArgs
+    {
+        public int Column;
+        public string OldValue;
+        public string NewValue;
+        public FastGridControl Grid;
+    }
 }
