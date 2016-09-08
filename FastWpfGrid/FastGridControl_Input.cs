@@ -102,14 +102,14 @@ namespace FastWpfGrid
                     }
                     else
                     {
-                        isHeaderClickHandled = OnModelColumnClick(_columnSizes.RealToModel(cell.Column.Value));
+                        isHeaderClickHandled = OnModelColumnClick(_columnSizes.RealToModel(cell.Column.Value), cell.IsColumnFilter);
                     }
                 }
                 if (cell.IsRowHeader)
                 {
                     if (IsTransposed)
                     {
-                        isHeaderClickHandled = OnModelColumnClick(_rowSizes.RealToModel(cell.Row.Value));
+                        isHeaderClickHandled = OnModelColumnClick(_rowSizes.RealToModel(cell.Row.Value), cell.IsColumnFilter);
                     }
                     else
                     {
@@ -160,6 +160,19 @@ namespace FastWpfGrid
                         CaptureMouse();
                     }
                     OnChangeSelectedCells(true);
+                }
+
+                if (cell.IsColumnFilter)
+                {
+                    if (_currentCell == cell)
+                    {
+                        _showCellEditorIfMouseUp = _currentCell;
+                    }
+                    else
+                    {
+                        HideInlineEditor();
+                        SetCurrentCell(cell);
+                    }
                 }
 
                 if (cell.IsCell)
@@ -359,7 +372,7 @@ namespace FastWpfGrid
             }
         }
 
-        private bool OnModelColumnClick(int column)
+        private bool OnModelColumnClick(int column, bool isColumnFilter)
         {
             if (column >= 0 && column < _modelColumnCount)
             {
@@ -367,6 +380,7 @@ namespace FastWpfGrid
                 {
                     Grid = this,
                     Column = column,
+                    IsColumnFilter = isColumnFilter
                 };
                 if (ColumnHeaderClick != null)
                 {
@@ -576,7 +590,8 @@ namespace FastWpfGrid
                 pt.Y *= DpiDetector.DpiYKoef;
                 _mouseCursorPoint = pt;
                 var cell = GetCellAddress(pt);
-                _mouseMoveRow = GetSeriesIndexOnPosition(pt.Y, HeaderHeight, _rowSizes, FirstVisibleRowScrollIndex);
+                var hFilter = IsColumnFilterEnabled ? FilterHeight : 0;
+                _mouseMoveRow = GetSeriesIndexOnPosition(pt.Y, HeaderHeight + hFilter, _rowSizes, FirstVisibleRowScrollIndex);
                 _mouseMoveColumn = GetSeriesIndexOnPosition(pt.X, HeaderWidth, _columnSizes, FirstVisibleColumnScrollIndex);
 
                 if (_resizingColumn.HasValue)

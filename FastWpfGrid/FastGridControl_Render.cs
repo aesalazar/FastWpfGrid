@@ -40,6 +40,7 @@ namespace FastWpfGrid
                 if (ShouldDrawGridHeader())
                 {
                     RenderGridHeader();
+                    if (IsColumnFilterEnabled) RenderFilter();
                 }
 
                 // render frozen rows
@@ -102,6 +103,7 @@ namespace FastWpfGrid
                     if (col < 0 || col >= _realColumnCount) continue;
                     if (!ShouldDrawColumnHeader(col)) continue;
                     RenderColumnHeader(col);
+                    if (IsColumnFilterEnabled) RenderColumnFilter(col);
                 }
             }
             if (_isInvalidatedAll)
@@ -119,6 +121,14 @@ namespace FastWpfGrid
             RenderCell(cell, rect, null, HeaderBackground, FastGridCellAddress.GridHeader);
         }
 
+        private void RenderFilter()
+        {
+            if (Model == null) return;
+            var cell = Model.GetGridHeader(this);
+            var rect = GetGridFilterRect();
+            RenderCell(cell, rect, null, HeaderBackground, FastGridCellAddress.GridHeader);
+        }
+
         private void RenderColumnHeader(int col)
         {
             var cell = GetColumnHeader(col);
@@ -133,6 +143,28 @@ namespace FastWpfGrid
             Color? hoverColor = null;
             if (col == _mouseOverColumnHeader) hoverColor = MouseOverRowColor;
 
+            RenderCell(cell, rect, null, hoverColor ?? selectedBgColor ?? cellBackground ?? HeaderBackground, new FastGridCellAddress(null, col));
+        }
+
+        private void RenderColumnFilter(int col)
+        {
+            var cell = GetColumnFilter(col);
+
+            Color? selectedBgColor = null;
+            if (col == _currentCell.Column) selectedBgColor = HeaderCurrentBackground;
+
+            var rect = GetColumnFilterRect(col);
+            Color? cellBackground = null;
+            if (cell != null) cellBackground = cell.BackgroundColor;
+
+            Color? hoverColor = null;
+            if (col == _mouseOverColumnHeader) hoverColor = MouseOverRowColor;
+
+            _drawBuffer.DrawRectangle(rect.Left, rect.Top, rect.Right, rect.Bottom, GridLineColor);
+            rect.Left += 2;
+            rect.Right -= 2;
+            rect.Top += 2;
+            rect.Bottom -= 2;
             RenderCell(cell, rect, null, hoverColor ?? selectedBgColor ?? cellBackground ?? HeaderBackground, new FastGridCellAddress(null, col));
         }
 

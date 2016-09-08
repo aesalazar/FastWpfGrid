@@ -16,6 +16,7 @@ namespace FastWpfGrid
     public class ColumnClickEventArgs : EventArgs
     {
         public int Column;
+        public bool IsColumnFilter;
         public FastGridControl Grid;
         public bool Handled;
     }

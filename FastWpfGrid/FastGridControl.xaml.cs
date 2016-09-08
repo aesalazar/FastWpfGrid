@@ -31,6 +31,7 @@ namespace FastWpfGrid
         private FastGridCellAddress _currentCell;
 
         private int _headerHeight;
+        private int _filterHeight;
         private int _headerWidth;
         private Dictionary<Tuple<bool, bool>, GlyphFont> _glyphFonts = new Dictionary<Tuple<bool, bool>, GlyphFont>();
         private Dictionary<Color, Brush> _solidBrushes = new Dictionary<Color, Brush>();
@@ -66,6 +67,11 @@ namespace FastWpfGrid
             get { return _isReadOnly; }
             set { _isReadOnly = value; }
         }
+
+        /// <summary>
+        /// Show the column filter below the column headers.
+        /// </summary>
+        public bool IsColumnFilterEnabled { get; set; }
 
         public GlyphFont GetFont(bool isBold, bool isItalic)
         {
@@ -117,6 +123,7 @@ namespace FastWpfGrid
         {
             HeaderWidth = GetTextWidth("0000000", false, false);
             HeaderHeight = _rowSizes.DefaultSize;
+            FilterHeight = _rowSizes.DefaultSize;
 
             if (IsTransposed) CountTransposedHeaderWidth();
             if (Model != null)
@@ -332,6 +339,13 @@ namespace FastWpfGrid
             return _model.GetColumnHeader(this, col);
         }
 
+        private IFastGridCell GetModelColumnFilter(int col)
+        {
+            if (_model == null) return null;
+            if (col < 0 || col >= _modelColumnCount) return null;
+            return _model.GetColumnFilter(this, col);
+        }
+
         private IFastGridCell GetModelCell(int row, int col)
         {
             if (_model == null) return null;
@@ -344,6 +358,10 @@ namespace FastWpfGrid
         {
             if (IsTransposed) return GetModelRowHeader(_columnSizes.RealToModel(col));
             return GetModelColumnHeader(_columnSizes.RealToModel(col));
+        }
+        private IFastGridCell GetColumnFilter(int col)
+        {
+            return GetModelColumnFilter(_columnSizes.RealToModel(col));
         }
 
         private IFastGridCell GetRowHeader(int row)
@@ -371,9 +389,11 @@ namespace FastWpfGrid
         {
             using (var ctx = CreateInvalidationContext())
             {
-                if (saveCellValue && _inplaceEditorCell.IsCell && _inlineTextChanged)
+                if (saveCellValue && (_inplaceEditorCell.IsCell || _inplaceEditorCell.IsColumnFilter) && _inlineTextChanged)
                 {
-                    var cell = GetCell(_inplaceEditorCell.Row.Value, _inplaceEditorCell.Column.Value);
+                    var cell = _inplaceEditorCell.IsColumnFilter 
+                        ? GetColumnFilter(_inplaceEditorCell.Column.Value) 
+                        : GetCell(_inplaceEditorCell.Row.Value, _inplaceEditorCell.Column.Value);
                     cell.SetEditText(edText.Text);
                     InvalidateCell(_inplaceEditorCell);
                 }
@@ -386,9 +406,9 @@ namespace FastWpfGrid
 
         private void ShowInlineEditor(FastGridCellAddress cell, string textValueOverride = null)
         {
-            if (_isReadOnly) return;
-            if (!cell.IsCell) return;
-            var cellObj = GetCell(cell.Row.Value, cell.Column.Value);
+            if (_isReadOnly && !cell.IsColumnFilter) return;
+            if (!cell.IsCell && !cell.IsColumnFilter) return;
+            var cellObj = cell.IsColumnFilter ? GetColumnFilter(cell.Column.Value) : GetCell(cell.Row.Value, cell.Column.Value);
             if (cellObj == null) return;
             string text = cellObj.GetEditText();
             if (text == null) return;
@@ -425,12 +445,16 @@ namespace FastWpfGrid
 
         private void AdjustInlineEditorPosition()
         {
-            if (_inplaceEditorCell.IsCell)
+            if (_inplaceEditorCell.IsCell || _inplaceEditorCell.IsColumnFilter)
             {
-                bool visible = _rowSizes.IsVisible(_inplaceEditorCell.Row.Value, FirstVisibleRowScrollIndex, GridScrollAreaHeight)
+                bool visible = _inplaceEditorCell.IsColumnFilter 
+                    ? true
+                    :_rowSizes.IsVisible(_inplaceEditorCell.Row.Value, FirstVisibleRowScrollIndex, GridScrollAreaHeight)
                                && _columnSizes.IsVisible(_inplaceEditorCell.Column.Value, FirstVisibleColumnScrollIndex, GridScrollAreaWidth);
                 edText.Visibility = visible ? Visibility.Visible : Visibility.Hidden;
-                var rect = GetCellRect(_inplaceEditorCell.Row.Value, _inplaceEditorCell.Column.Value);
+                var rect = _inplaceEditorCell.IsColumnFilter
+                    ? GetColumnFilterRect(_inplaceEditorCell.Column.Value)
+                    : GetCellRect(_inplaceEditorCell.Row.Value, _inplaceEditorCell.Column.Value);
 
                 edText.Margin = new Thickness
                     {
@@ -475,7 +499,7 @@ namespace FastWpfGrid
         private void SetCurrentCell(FastGridCellAddress cell)
         {
             if (cell.IsRowHeader && _currentCell.IsCell) cell = new FastGridCellAddress(cell.Row, _currentCell.Column);
-            if (cell.IsColumnHeader && _currentCell.IsCell) cell = new FastGridCellAddress(_currentCell.Row, cell.Column);
+            if ((cell.IsColumnHeader && !cell.IsColumnFilter) && _currentCell.IsCell) cell = new FastGridCellAddress(_currentCell.Row, cell.Column);
 
             using (var ctx = CreateInvalidationContext())
             {

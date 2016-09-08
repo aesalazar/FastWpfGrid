@@ -13,6 +13,7 @@ namespace FastWpfGrid
         private List<IFastGridView> _grids = new List<IFastGridView>();
         private int? _requestedRow;
         private int? _requestedColumn;
+        private int? _requestedColumnFilter;
         private HashSet<int> _frozenRows = new HashSet<int>();
         private HashSet<int> _hiddenRows = new HashSet<int>();
         private HashSet<int> _frozenColumns = new HashSet<int>();
@@ -35,6 +36,7 @@ namespace FastWpfGrid
         {
             _requestedRow = row;
             _requestedColumn = column;
+            _requestedColumnFilter = null;
             return this;
         }
 
@@ -47,6 +49,7 @@ namespace FastWpfGrid
         {
             _requestedRow = row;
             _requestedColumn = null;
+            _requestedColumnFilter = null;
             return this;
         }
 
@@ -54,6 +57,15 @@ namespace FastWpfGrid
         {
             _requestedColumn = column;
             _requestedRow = null;
+            _requestedColumnFilter = null;
+            return this;
+        }
+
+        public virtual IFastGridCell GetColumnFilter(IFastGridView view, int column)
+        {
+            _requestedColumn = null;
+            _requestedRow = null;
+            _requestedColumnFilter = column;
             return this;
         }
 
@@ -65,6 +77,15 @@ namespace FastWpfGrid
         public virtual string GetColumnHeaderText(int column)
         {
             return "Column " + (column + 1).ToString();
+        }
+
+        public virtual string GetColumnFilterText(int column)
+        {
+            return "<none>";
+        }
+
+        public virtual void SetColumnFilterText(int column, string value)
+        {
         }
 
         public virtual void AttachView(IFastGridView view)
@@ -177,12 +198,17 @@ namespace FastWpfGrid
 
         public virtual string GetEditText()
         {
-            return GetCellText(_requestedRow.Value, _requestedColumn.Value);
+            return _requestedColumnFilter.HasValue 
+                ? GetColumnFilterText(_requestedColumnFilter.Value)
+                : GetCellText(_requestedRow.Value, _requestedColumn.Value);
         }
 
         public virtual void SetEditText(string value)
         {
-            SetCellText(_requestedRow.Value, _requestedColumn.Value, value);
+            if (_requestedColumnFilter.HasValue)
+                SetColumnFilterText(_requestedColumnFilter.Value, value);
+            else
+                SetCellText(_requestedRow.Value, _requestedColumn.Value, value);
         }
 
         public virtual void HandleSelectionCommand(IFastGridView view, string command)
@@ -223,8 +249,9 @@ namespace FastWpfGrid
         {
             get
             {
-                if (_requestedColumn == null && _requestedRow == null) return null;
+                if (_requestedColumn == null && _requestedRow == null && _requestedColumnFilter == null) return null;
                 if (_requestedColumn != null && _requestedRow != null) return GetCellText(_requestedRow.Value, _requestedColumn.Value);
+                if (_requestedColumnFilter != null) return GetColumnFilterText(_requestedColumnFilter.Value);
                 if (_requestedColumn != null) return GetColumnHeaderText(_requestedColumn.Value);
                 if (_requestedRow != null) return GetRowHeaderText(_requestedRow.Value);
                 return null;

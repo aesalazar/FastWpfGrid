@@ -33,12 +33,14 @@ namespace FastWpfGrid
         public readonly int? Row;
         public readonly int? Column;
         public bool IsGridHeader;
+        public bool IsColumnFilter;
 
-        public FastGridCellAddress(int? row, int? col, bool isGridHeader = false)
+        public FastGridCellAddress(int? row, int? col, bool isGridHeader = false, bool isColumnFilter = false)
         {
             Row = row;
             Column = col;
             IsGridHeader = isGridHeader;
+            IsColumnFilter = isColumnFilter;
         }
 
         public FastGridCellAddress ChangeRow(int? row)
