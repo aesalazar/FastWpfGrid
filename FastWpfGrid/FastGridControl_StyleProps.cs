@@ -10,6 +10,7 @@ namespace FastWpfGrid
 {
     partial class FastGridControl
     {
+        private Color _backgroundColor = Colors.White;
         private Color _cellFontColor = Colors.Black;
         private Color _headerBackground = Color.FromRgb(0xF6, 0xF7, 0xF9);
         private Color _headerFontColor = Colors.Black;
@@ -93,6 +94,16 @@ namespace FastWpfGrid
             {
                 _rowHeightReserve = value;
                 RecalculateDefaultCellSize();
+                RenderGrid();
+            }
+        }
+
+        public Color BackgroundColor
+        {
+            get { return _backgroundColor; }
+            set
+            {
+                _backgroundColor = value;
                 RenderGrid();
             }
         }

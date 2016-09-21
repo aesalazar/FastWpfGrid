@@ -34,7 +34,7 @@ namespace FastWpfGrid
 
                 if (!_isInvalidated || _isInvalidatedAll)
                 {
-                    _drawBuffer.Clear(Colors.White);
+                    _drawBuffer.Clear(BackgroundColor);
                 }
 
                 if (ShouldDrawGridHeader())
@@ -421,9 +421,9 @@ namespace FastWpfGrid
                     _rowSizes.InvalidateAfterScroll(FirstVisibleRowScrollIndex, row, InvalidateRow, GridScrollAreaHeight);
                     FirstVisibleRowScrollIndex = row;
 
-                    _drawBuffer.ScrollY(scrollY, GetScrollRect());
-                    _drawBuffer.ScrollY(scrollY, GetRowHeadersScrollRect());
-                    if (_columnSizes.FrozenCount > 0) _drawBuffer.ScrollY(scrollY, GetFrozenColumnsRect());
+                    _drawBuffer.ScrollY(scrollY, GetScrollRect(), BackgroundColor);
+                    _drawBuffer.ScrollY(scrollY, GetRowHeadersScrollRect(), BackgroundColor);
+                    if (_columnSizes.FrozenCount > 0) _drawBuffer.ScrollY(scrollY, GetFrozenColumnsRect(), BackgroundColor);
                 }
                 // if row heights are changed, invalidate all
                 if (CountVisibleRowHeights())
@@ -444,9 +444,9 @@ namespace FastWpfGrid
                     _columnSizes.InvalidateAfterScroll(FirstVisibleColumnScrollIndex, column, InvalidateColumn, GridScrollAreaWidth);
                     FirstVisibleColumnScrollIndex = column;
 
-                    _drawBuffer.ScrollX(scrollX, GetScrollRect());
-                    _drawBuffer.ScrollX(scrollX, GetColumnHeadersScrollRect());
-                    if (_rowSizes.FrozenCount > 0) _drawBuffer.ScrollX(scrollX, GetFrozenRowsRect());
+                    _drawBuffer.ScrollX(scrollX, GetScrollRect(), BackgroundColor);
+                    _drawBuffer.ScrollX(scrollX, GetColumnHeadersScrollRect(), BackgroundColor);
+                    if (_rowSizes.FrozenCount > 0) _drawBuffer.ScrollX(scrollX, GetFrozenRowsRect(), BackgroundColor);
                 }
                 if (IsTransposed) OnScrolledModelRows();
                 else OnScrolledModelColumns();
