@@ -308,7 +308,8 @@ namespace FastWpfGrid
                     {
                         var textOrigin = new IntPoint(leftAlign ? leftPos : rightPos - width, top);
                         var font = GetFont(block.IsBold, block.IsItalic);
-                        _drawBuffer.DrawString(textOrigin.X, textOrigin.Y, rectContent, selectedTextColor ?? block.FontColor ?? CellFontColor, UseClearType ? bgColor : (Color?) null,
+                        var fontcolor = selectedTextColor ?? block.FontColor ?? ((cellAddr.IsColumnHeader) ? HeaderFontColor : CellFontColor);
+                        _drawBuffer.DrawString(textOrigin.X, textOrigin.Y, rectContent, fontcolor, UseClearType ? bgColor : (Color?) null,
                                                font,
                                                block.TextData);
                     }
