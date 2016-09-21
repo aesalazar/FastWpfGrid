@@ -101,7 +101,7 @@ namespace FastWpfGrid
                 for (int col = FirstVisibleColumnScrollIndex + _columnSizes.FrozenCount; col < FirstVisibleColumnScrollIndex + _columnSizes.FrozenCount + colsToRender; col++)
                 {
                     if (col < 0 || col >= _realColumnCount) continue;
-                    if (!ShouldDrawColumnHeader(col)) continue;
+                    //if (!ShouldDrawColumnHeader(col)) continue;  //This will cause fragmented lines below the column header when scrolling horizontally
                     RenderColumnHeader(col);
                     if (IsColumnFilterEnabled) RenderColumnFilter(col);
                 }
