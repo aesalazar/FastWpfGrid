@@ -161,10 +161,8 @@ namespace FastWpfGrid
             if (col == _mouseOverColumnHeader) hoverColor = MouseOverRowColor;
 
             _drawBuffer.DrawRectangle(rect.Left, rect.Top, rect.Right, rect.Bottom, GridLineColor);
-            rect.Left += 2;
-            rect.Right -= 2;
-            rect.Top += 2;
-            rect.Bottom -= 2;
+            _drawBuffer.DrawRectangle(++rect.Left, ++rect.Top, --rect.Right, --rect.Bottom, HeaderBackground);
+            _drawBuffer.DrawRectangle(++rect.Left, ++rect.Top, --rect.Right, --rect.Bottom, GridLineColor);
             RenderCell(cell, rect, null, hoverColor ?? selectedBgColor ?? cellBackground ?? HeaderBackground, new FastGridCellAddress(null, col));
         }
 
