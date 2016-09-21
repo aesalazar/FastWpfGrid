@@ -73,6 +73,11 @@ namespace FastWpfGrid
         /// </summary>
         public bool IsColumnFilterEnabled { get; set; }
 
+        /// <summary>
+        /// If <c>true</c> selecting a cell and dragging off the grid will prevent grid from automatically scrolling.
+        /// </summary>
+        public bool IsDragScrollDisabled { get; set; }
+
         public GlyphFont GetFont(bool isBold, bool isItalic)
         {
             var key = Tuple.Create(isBold, isItalic);

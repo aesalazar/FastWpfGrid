@@ -259,6 +259,9 @@ namespace FastWpfGrid
 
         private void _dragTimer_Tick(object sender, EventArgs e)
         {
+            if (IsDragScrollDisabled)
+                return;
+
             using (var ctx = CreateInvalidationContext())
             {
                 if (_mouseIsBehindBottom)
