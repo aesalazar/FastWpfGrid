@@ -4,6 +4,24 @@
         WindowState="Maximized"
         xmlns:FastWpfGrid="clr-namespace:FastWpfGrid;assembly=FastWpfGrid"
         xmlns:FastWpfGridTest="clr-namespace:FastWpfGridTest" Title="FastWpfGrid Test Application" Height="350" Width="525" >
+    
+    <Window.Resources>
+        <!--FAST GRID STYLE FOR DARK GRID -->
+        <x:Array x:Key="AlternatingColorArray" Type="Color">
+            <Color>#090909</Color>
+            <Color>#161616</Color>
+        </x:Array>
+
+        <Color x:Key="GridBackgroundColor">Black</Color>
+        <Color x:Key="GridCellFontColor">White</Color>
+        <Color x:Key="GridLineColor">#2E2E2E</Color>
+        <Color x:Key="GridHeaderBackgroundColor">#090909</Color>
+        <Color x:Key="GridHeaderFontColor">#ffa800</Color>
+        <Color x:Key="GridMouseOverRowColor">DimGray</Color>
+        <Color x:Key="GridHeaderCurrentBackground">DimGray</Color>
+        <Color x:Key="GridSelectedCellColor">DimGray</Color>
+
+    </Window.Resources>
     <Grid>
         <TabControl SelectionChanged="tabChanged" x:Name="tab">
             <TabItem Header="Grid 1 - scrolling">
@@ -20,6 +38,15 @@
                     </StackPanel>
                     <FastWpfGrid:FastGridControl x:Name="grid1" Grid.Row="1" 
                                                  IsColumnFilterEnabled="True"
+                                                 BackgroundColor="{StaticResource GridBackgroundColor}"
+                                                 SelectedColor="{StaticResource GridSelectedCellColor}"
+                                                 HeaderCurrentBackground="{StaticResource GridHeaderCurrentBackground}"
+                                                 MouseOverRowColor="{StaticResource GridMouseOverRowColor}"
+                                                 CellFontColor="{StaticResource GridCellFontColor}"
+                                                 GridLineColor="{StaticResource GridLineColor}"
+                                                 HeaderBackground="{StaticResource GridHeaderBackgroundColor}"
+                                                 HeaderFontColor="{StaticResource GridHeaderFontColor}"
+                                                 AlternatingColors="{StaticResource AlternatingColorArray}"                                                 
                                                  IsTransposed="{Binding IsChecked, ElementName=chbIsTransposed1, Mode=TwoWay}"
                                                  UseClearType="{Binding IsChecked, ElementName=chbClearType1}"
                                                  SelectedCellsChanged="grid1_SelectedCellsChanged"
