@@ -163,7 +163,7 @@ namespace FastWpfGrid
             _drawBuffer.DrawRectangle(rect.Left, rect.Top, rect.Right, rect.Bottom, GridLineColor);
             _drawBuffer.DrawRectangle(++rect.Left, ++rect.Top, --rect.Right, --rect.Bottom, HeaderBackground);
             _drawBuffer.DrawRectangle(++rect.Left, ++rect.Top, --rect.Right, --rect.Bottom, GridLineColor);
-            RenderCell(cell, rect, null, hoverColor ?? selectedBgColor ?? cellBackground ?? HeaderBackground, new FastGridCellAddress(null, col));
+            RenderCell(cell, rect, null, hoverColor ?? selectedBgColor ?? cellBackground ?? HeaderBackground, new FastGridCellAddress(null, col, true, true));
         }
 
         private void RenderRowHeader(int row)
@@ -308,7 +308,12 @@ namespace FastWpfGrid
                     {
                         var textOrigin = new IntPoint(leftAlign ? leftPos : rightPos - width, top);
                         var font = GetFont(block.IsBold, block.IsItalic);
-                        var fontcolor = selectedTextColor ?? block.FontColor ?? ((cellAddr.IsColumnHeader) ? HeaderFontColor : CellFontColor);
+                        var fontcolor = 
+                            selectedTextColor 
+                            ?? block.FontColor 
+                            ?? ((cellAddr.IsColumnHeader) 
+                                ? (cellAddr.IsColumnFilter) ? HeaderFilterFontColor : HeaderFontColor 
+                                : CellFontColor);
                         _drawBuffer.DrawString(textOrigin.X, textOrigin.Y, rectContent, fontcolor, UseClearType ? bgColor : (Color?) null,
                                                font,
                                                block.TextData);

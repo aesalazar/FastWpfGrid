@@ -14,6 +14,7 @@ namespace FastWpfGrid
         private Color _cellFontColor = Colors.Black;
         private Color _headerBackground = Color.FromRgb(0xF6, 0xF7, 0xF9);
         private Color _headerFontColor = Colors.Black;
+        private Color _headerFilterFontColor = Colors.Gray;
         private Color _headerCurrentBackground = Color.FromRgb(190, 207, 220);
         private Color _selectedColor = Color.FromRgb(51, 153, 255);
         private Color _selectedTextColor = Colors.White;
@@ -231,6 +232,16 @@ namespace FastWpfGrid
             set
             {
                 _headerFontColor = value;
+                RenderChanged();
+            }
+        }
+
+        public Color HeaderFilterFontColor
+        {
+            get { return _headerFilterFontColor; }
+            set
+            {
+                _headerFilterFontColor = value;
                 RenderChanged();
             }
         }
