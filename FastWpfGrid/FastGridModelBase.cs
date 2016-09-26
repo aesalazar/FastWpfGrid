@@ -19,6 +19,8 @@ namespace FastWpfGrid
         private HashSet<int> _frozenColumns = new HashSet<int>();
         private HashSet<int> _hiddenColumns = new HashSet<int>();
 
+        private Dictionary<int, int> _columnWidthOverrides = new Dictionary<int, int>();
+
         public abstract int ColumnCount { get; }
 
         public abstract int RowCount { get; }
@@ -121,6 +123,11 @@ namespace FastWpfGrid
         {
             return _frozenRows;
         }
+
+        public virtual Dictionary<int, int> GetColumnWidthOverrides(IFastGridView view)
+        {
+            return _columnWidthOverrides;
+        } 
 
         public void SetColumnArrange(HashSet<int> hidden, HashSet<int> frozen)
         {

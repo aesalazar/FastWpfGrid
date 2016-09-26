@@ -514,10 +514,12 @@ namespace FastWpfGrid
             int rowCount = _isTransposed ? _modelColumnCount : _modelRowCount;
             int colCount = _isTransposed ? _modelRowCount : _modelColumnCount;
 
+            var overrides = _model.GetColumnWidthOverrides(this);
+
             for (int col = 0; col < colCount; col++)
             {
                 var cell = _isTransposed ? _model.GetRowHeader(this, col) : _model.GetColumnHeader(this, col);
-                _columnSizes.PutSizeOverride(col, GetCellContentWidth(cell) + 2 * CellPaddingHorizontal);
+                _columnSizes.PutSizeOverride(col, overrides.ContainsKey(col) ? overrides[col] : GetCellContentWidth(cell) + 2 * CellPaddingHorizontal);
             }
 
             int visRows = VisibleRowCount;
@@ -527,7 +529,7 @@ namespace FastWpfGrid
                 for (int col = 0; col < colCount; col++)
                 {
                     var cell = _isTransposed ? _model.GetCell(this, col, row) : _model.GetCell(this, row, col);
-                    _columnSizes.PutSizeOverride(col, GetCellContentWidth(cell, _columnSizes.MaxSize) + 2 * CellPaddingHorizontal);
+                    _columnSizes.PutSizeOverride(col, overrides.ContainsKey(col) ? overrides[col] : GetCellContentWidth(cell, _columnSizes.MaxSize) + 2*CellPaddingHorizontal);
                 }
             }
 
@@ -599,6 +601,11 @@ namespace FastWpfGrid
             if (_currentCell.IsCell) AddSelectedCell(_currentCell);
             AdjustScrollBarPositions();
             OnChangeSelectedCells(false);
+        }
+
+        public void OverrideDefaultColumnWidth(int column, int width)
+        {
+            _columnSizes.PutSizeOverride(column, width);
         }
 
         //public int FirstVisibleRowModelIndex
