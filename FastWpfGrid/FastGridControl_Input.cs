@@ -28,6 +28,8 @@ namespace FastWpfGrid
         public event Action<object, ColumnClickEventArgs> ColumnHeaderClick;
         public event Action<object, RowClickEventArgs> RowHeaderClick;
         public event EventHandler<ColumnFilterChangedEventArgs> ColumnFilterChanged;
+        public event EventHandler<ColumnResizedEventArgs> ColumnResized;
+
         public List<ActiveRegion> CurrentCellActiveRegions = new List<ActiveRegion>();
         public ActiveRegion CurrentHoverRegion;
         private Point? _mouseCursorPoint;
@@ -471,6 +473,22 @@ namespace FastWpfGrid
             ColumnFilterChanged(this, args);
         }
 
+        private void OnColumnResized(int column, int oldValue, int newValue)
+        {
+            if (ColumnResized == null)
+                return;
+
+            var args = new ColumnResizedEventArgs
+            {
+                Column = column,
+                OldValue = oldValue,
+                NewValue = newValue,
+                Grid = this
+            };
+
+            ColumnResized(this, args);
+        }
+
         private void edTextKeyDown(object sender, KeyEventArgs e)
         {
             using (var ctx = CreateInvalidationContext())
@@ -626,6 +644,8 @@ namespace FastWpfGrid
                     }
                     AdjustScrollbars();
                     InvalidateAll();
+
+                    OnColumnResized(_resizingColumn.Value, _resizingColumnStartSize.Value, newSize);
                 }
                 else
                 {

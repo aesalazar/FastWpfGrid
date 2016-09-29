@@ -28,4 +28,12 @@ namespace FastWpfGrid
         public string NewValue;
         public FastGridControl Grid;
     }
+
+    public class ColumnResizedEventArgs : EventArgs
+    {
+        public int Column;
+        public int OldValue;
+        public int NewValue;
+        public FastGridControl Grid;
+    }
 }
