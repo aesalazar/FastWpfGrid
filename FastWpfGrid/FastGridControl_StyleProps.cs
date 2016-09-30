@@ -16,7 +16,7 @@ namespace FastWpfGrid
         private Color _headerFontColor = Colors.Black;
         private Color _headerFilterFontColor = Colors.Gray;
         private Color _headerCurrentBackground = Color.FromRgb(190, 207, 220);
-        private Color _selectedColor = Color.FromRgb(51, 153, 255);
+        private Color? _selectedColor = Color.FromRgb(51, 153, 255);
         private Color _selectedTextColor = Colors.White;
         private Color _limitedSelectedColor = Color.FromRgb(51, 220, 220);
         private Color _limitedSelectedTextColor = Colors.White;
@@ -119,7 +119,7 @@ namespace FastWpfGrid
             }
         }
 
-        public Color SelectedColor
+        public Color? SelectedColor
         {
             get { return _selectedColor; }
             set
